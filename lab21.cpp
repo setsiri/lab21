@@ -1,5 +1,7 @@
+#define _USE_MATH_DEFINES
 #include<iostream>
 #include<cmath>
+
 using namespace std;
 
 class ComplexNumber{				
@@ -11,7 +13,12 @@ class ComplexNumber{
 		ComplexNumber operator-(const ComplexNumber &);
 		ComplexNumber operator*(const ComplexNumber &);
 		ComplexNumber operator/(const ComplexNumber &);
-		bool operator==(const ComplexNumber &);
+		friend ComplexNumber operator+(double,const ComplexNumber &);
+		friend ComplexNumber operator-(double,const ComplexNumber &);
+		friend ComplexNumber operator*(double,const ComplexNumber &);
+		friend ComplexNumber operator/(double,const ComplexNumber &);
+		friend ostream & operator<<(ostream &os,const ComplexNumber &);
+		friend bool operator==(const ComplexNumber &,const ComplexNumber &);
 		double abs();
 		double angle();
 };
@@ -28,6 +35,59 @@ ComplexNumber ComplexNumber::operator-(const ComplexNumber &c){
 	return ComplexNumber(real-c.real,imag-c.imag);
 }
 
+ComplexNumber ComplexNumber::operator*(const ComplexNumber &c){
+	return ComplexNumber(((real*c.real)-(imag*c.imag)),((real*c.imag)+(c.real*imag)));
+}
+
+ComplexNumber ComplexNumber::operator/(const ComplexNumber &c){
+	return ComplexNumber(((real*c.real)+(imag*c.imag))/(pow(c.real,2)+pow(c.imag,2)),((real*c.imag)-(imag*c.real))/(pow(c.real,2)+pow(c.imag,2))*(-1));
+}
+
+ComplexNumber operator+(double c1,const ComplexNumber &c2){
+	return ComplexNumber(c1+c2.real,c2.imag);
+}
+
+ComplexNumber operator-(double c1,const ComplexNumber &c2){
+	return ComplexNumber(c1-c2.real,-c2.imag);
+}
+
+ComplexNumber operator*(double c1,const ComplexNumber &c){
+	return ComplexNumber(((c1*c.real)-(0*c.imag)),((c1*c.imag)+(c.real*0)));
+}
+
+ComplexNumber operator/(double s,const ComplexNumber &c){
+	return ComplexNumber(s*c.real/(pow(c.real,2)+pow(c.imag,2)),s*c.imag/(pow(c.real,2)+pow(c.imag,2))*(-1));
+}
+
+bool operator==(const ComplexNumber &d,const ComplexNumber &c){
+	if(d.real==c.real&&d.imag==c.imag){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+double ComplexNumber::abs(){
+	double r;
+	return r= sqrt((real*real)+(imag*imag));
+}
+
+double ComplexNumber::angle(){
+	return atan2(imag,real)*180/M_PI;
+}
+
+ostream & operator<<(ostream &os,const ComplexNumber &c){
+	if(c.real==0&&c.imag!=0)
+		return os <<c.imag<<"i";
+	else if(c.real!=0&&c.imag==0)
+		return os <<c.real;
+	else if(c.real==0&&c.imag==0)
+		return os <<0;
+	else if(c.real!=0&&c.imag<0)
+		return os <<c.real<<c.imag<<"i";
+	else
+		return os <<c.real<<"+"<<c.imag<<"i";
+}
 //Write your code here
 
 int main(){
